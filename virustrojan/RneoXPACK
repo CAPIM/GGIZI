@@ -282,7 +282,7 @@ case $opcao in
   sleep 1
   menu;;
  21)
-  MonitorTotal.sh
+  MonitorTotal
   sleep 7
   menu;;
  22)
