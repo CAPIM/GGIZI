@@ -405,8 +405,6 @@ proto $PROTOCOL
 sndbuf 0
 rcvbuf 0
 remote $IP $PORT
-http-proxy-option CUSTOM-HEADER X-Online-Host sdp.vivo.com.br
-http-proxy $IP 80
 resolv-retry infinite
 nobind
 persist-key
@@ -426,7 +424,7 @@ float" > /etc/openvpn/client-common.txt
 	echo "Concluido!"
 	echo ""
 	echo "Seu arquivo está disponivel em" ~/"$CLIENT.ovpn"
-	echo "Para mais opções digite (bash openvivo.sh)!"
+	echo "Para mais opções digite ()!"
 fi
 
 rm -rf /etc/ssh/sshd_config
