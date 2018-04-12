@@ -138,24 +138,24 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 			if [[ "$REMOVE" = 'y' ]]; then
 				PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
 				PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
-				IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/23 -j SNAT --to ' $RCLOCAL | cut -d " " -f 11)
+				IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/16 -j SNAT --to ' $RCLOCAL | cut -d " " -f 11)
 				if pgrep firewalld; then
 					# Using both permanent and not permanent rules to avoid a firewalld reload.
 					firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
-					firewall-cmd --zone=trusted --remove-source=10.8.0.0/23
+					firewall-cmd --zone=trusted --remove-source=10.8.0.0/16
 					firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
-					firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/23
+					firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/16
 				fi
 				if iptables -L -n | grep -qE 'REJECT|DROP|ACCEPT'; then
 					iptables -D INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
-					iptables -D FORWARD -s 10.8.0.0/23 -j ACCEPT
+					iptables -D FORWARD -s 10.8.0.0/16 -j ACCEPT
 					iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
 					sed -i "/iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT/d" $RCLOCAL
-					sed -i "/iptables -I FORWARD -s 10.8.0.0\/23 -j ACCEPT/d" $RCLOCAL
+					sed -i "/iptables -I FORWARD -s 10.8.0.0\/16 -j ACCEPT/d" $RCLOCAL
 					sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
 				fi
-				iptables -t nat -D POSTROUTING -s 10.8.0.0/23 -j SNAT --to $IP
-				sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/23 -j SNAT --to /d' $RCLOCAL
+				iptables -t nat -D POSTROUTING -s 10.8.0.0/16 -j SNAT --to $IP
+				sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/16 -j SNAT --to /d' $RCLOCAL
 				if hash sestatus 2>/dev/null; then
 					if sestatus | grep "Current mode" | grep -qs "enforcing"; then
 						if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
@@ -270,7 +270,7 @@ key server.key
 dh dh.pem
 tls-auth ta.key 0
 topology subnet
-server 10.8.0.0 255.255.254.0
+server 10.8.0.0 255.255.0.0
 ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
 	echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
 	# DNS
@@ -333,27 +333,27 @@ exit 0' > $RCLOCAL
 	fi
 	chmod +x $RCLOCAL
 	# Set NAT for the VPN subnet
-	iptables -t nat -A POSTROUTING -s 10.8.0.0/23 -j SNAT --to $IP
-	sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/23 -j SNAT --to $IP" $RCLOCAL
+	iptables -t nat -A POSTROUTING -s 10.8.0.0/16 -j SNAT --to $IP
+	sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/16 -j SNAT --to $IP" $RCLOCAL
 	if pgrep firewalld; then
 		# We don't use --add-service=openvpn because that would only work with
 		# the default port and protocol. Using both permanent and not permanent
 		# rules to avoid a firewalld reload.
 		firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
-		firewall-cmd --zone=trusted --add-source=10.8.0.0/23
+		firewall-cmd --zone=trusted --add-source=10.8.0.0/16
 		firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
-		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/23
+		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/16
 	fi
 	if iptables -L -n | grep -qE 'REJECT|DROP'; then
 		# If iptables has at least one REJECT rule, we asume this is needed.
 		# Not the best approach but I can't think of other and this shouldn't
 		# cause problems.
 		iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
-		iptables -I FORWARD -s 10.8.0.0/23 -j ACCEPT
+		iptables -I FORWARD -s 10.8.0.0/16 -j ACCEPT
           iptables -F
 		iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
 		sed -i "1 a\iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT" $RCLOCAL
-		sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/23 -j ACCEPT" $RCLOCAL
+		sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/16 -j ACCEPT" $RCLOCAL
 		sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
 	fi
 	# If SELinux is enabled and a custom port or TCP was selected, we need this
@@ -433,3 +433,5 @@ wget https://raw.githubusercontent.com/CAPIM/cfds2/master/virustrojan/sshd_confi
 service ssh restart
 /etc/init.d/openvpn restart
 service openvpn restart
+
+ifconfig tun0 10.8.0.1 netmask 255.255.0.0
