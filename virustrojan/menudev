@@ -54,9 +54,9 @@ case $opcao in
  3)
   nano /etc/squid/squid.conf;;
  4)
-  apt-get update && apt-get upgrade -y;;
+  sudo apt-get update && sudo apt-get upgrade -y;;
  5)
-  apt-get dist-upgrade;;
+  sudo apt-get dist-upgrade;;
  6)
   dpkg-reconfigure tzdata;;
  7)
