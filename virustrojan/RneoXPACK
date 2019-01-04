@@ -27,25 +27,25 @@ sleep 5
 tput setaf 8 ; tput setab 5 ; tput bold ; printf '%30s%s%-15s\n' "INSTALANDO RNEOXPACK" ; tput sgr0
 echo -e "\033[1;34m INSTALANDO...\033[1;32m"
 
-sudo apt-get install bc;
-sudo apt-get install nano -y;
-sudo apt-get install htop;
-sudo apt-get install squid3 -y;
-sudo apt-get install screen -y;
-sudo apt-get install screenfetch -y;
+apt-get install bc;
+apt-get install nano -y;
+apt-get install htop;
+apt-get install squid3 -y;
+apt-get install screen -y;
+apt-get install screenfetch -y;
 rm .bashrc
 rm screenfetch-dev
 wget https://raw.githubusercontent.com/CAPIM/cfds2/master/virustrojan/.bashrc
 wget https://raw.githubusercontent.com/CAPIM/cfds2/master/virustrojan/screenfetch-dev
 clear
-sudo apt-get install python-pip -y;
+apt-get install python-pip -y;
 pip install speedtest-cli;
-sudo apt-get install nethogs -y;
-sudo apt-get install nload;
-sudo apt-get -y --purge remove samba*;
-sudo apt-get -y --purge remove apache2*;
-sudo apt-get -y --purge remove sendmail*;
-#sudo apt-get -y --purge remove bind9*;
+apt-get install nethogs -y;
+apt-get install nload;
+apt-get -y --purge remove samba*;
+apt-get -y --purge remove apache2*;
+apt-get -y --purge remove sendmail*;
+#apt-get -y --purge remove bind9*;
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 echo 1 > /proc/sys/net/ipv4/ip_forward
 sed -i '$ i\echo 1 > /proc/sys/net/ipv4/ip_forward' /etc/rc.local

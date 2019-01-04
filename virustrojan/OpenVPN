@@ -164,7 +164,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 					fi
 				fi
 				if [[ "$OS" = 'debian' ]]; then
-					sudo apt-get remove --purge -y openvpn openvpn-blacklist
+					apt-get remove --purge -y openvpn openvpn-blacklist
 				else
 					yum remove openvpn -y
 				fi
@@ -226,8 +226,8 @@ else
 	echo "Okay, você está pronto para executar o openvpn "
 	read -n1 -r -p "Pressione uma tecla para continuar..."
 	if [[ "$OS" = 'debian' ]]; then
-		sudo apt-get upgrade
-		sudo apt-get install openvpn iptables openssl ca-certificates -y
+		apt-get upgrade
+		apt-get install openvpn iptables openssl ca-certificates -y
 	else
 		# Else, the distro is CentOS
 		yum install epel-release -y
