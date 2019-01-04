@@ -1,5 +1,5 @@
 #!/bin/bash
-IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+IP=$(sudo wget -4qO- "http://whatismyip.akamai.com/")
 echo 'SQUID UBUNTU'
 rm -rf /etc/squid/squid.conf
 touch /etc/squid/squid.conf

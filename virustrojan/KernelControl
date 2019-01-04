@@ -1,5 +1,5 @@
 #!/bin/bash
-apt-get install lynx
+sudo apt-get install lynx
 clear
 
 tput setaf 8 ; tput setab 5; tput bold ; printf '%30s%s%-15s\n' "Genciador do Kernel" ; tput sgr0
@@ -20,7 +20,7 @@ fi
 removeclean()
 {
 	#limpeza
-	dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | xargs -p sudo apt-get -y purge
+	dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | xargs -p sudo sudo apt-get -y purge
 }
 
 selectiveclean()
@@ -74,7 +74,7 @@ updatelatest()
 			echo
 			echo "Baixando o novo Kernel"
 	        DownloadFolder=/tmp/kernel_$LastKernelAvaliable; mkdir -p $DownloadFolder; cd $DownloadFolder
-	        wget $(lynx -dump -listonly $AddressLastVersion | awk '/http/{print $2}' | egrep 'all.deb|generic(.){1,}'$myarch'.deb')
+	        sudo wget $(lynx -dump -listonly $AddressLastVersion | awk '/http/{print $2}' | egrep 'all.deb|generic(.){1,}'$myarch'.deb')
 	        echo
 	        echo "...e vamos instalar"
 	        echo

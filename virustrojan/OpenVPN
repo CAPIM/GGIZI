@@ -71,7 +71,7 @@ newclient () {
 # and to avoid getting an IPv6.
 IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 if [[ "$IP" = "" ]]; then
-		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+		IP=$(sudo wget -4qO- "http://whatismyip.akamai.com/")
 fi
 
 if [[ -e /etc/openvpn/server.conf ]]; then
@@ -164,7 +164,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 					fi
 				fi
 				if [[ "$OS" = 'debian' ]]; then
-					apt-get remove --purge -y openvpn openvpn-blacklist
+					sudo apt-get remove --purge -y openvpn openvpn-blacklist
 				else
 					yum remove openvpn -y
 				fi
@@ -226,19 +226,19 @@ else
 	echo "Okay, você está pronto para executar o openvpn "
 	read -n1 -r -p "Pressione uma tecla para continuar..."
 	if [[ "$OS" = 'debian' ]]; then
-		apt-get upgrade
-		apt-get install openvpn iptables openssl ca-certificates -y
+		sudo apt-get upgrade
+		sudo apt-get install openvpn iptables openssl ca-certificates -y
 	else
 		# Else, the distro is CentOS
 		yum install epel-release -y
-		yum install openvpn iptables openssl wget ca-certificates -y
+		yum install openvpn iptables openssl sudo wget ca-certificates -y
 	fi
 	# An old version of easy-rsa was available by default in some openvpn packages
 	if [[ -d /etc/openvpn/easy-rsa/ ]]; then
 		rm -rf /etc/openvpn/easy-rsa/
 	fi
 	# Adquirindo easy-rsa
-	wget -O ~/EasyRSA-3.0.1.tgz "https://github.com/OpenVPN/easy-rsa/releases/download/3.0.1/EasyRSA-3.0.1.tgz"
+	sudo wget -O ~/EasyRSA-3.0.1.tgz "https://github.com/OpenVPN/easy-rsa/releases/download/3.0.1/EasyRSA-3.0.1.tgz"
 	tar xzf ~/EasyRSA-3.0.1.tgz -C ~/
 	mv ~/EasyRSA-3.0.1/ /etc/openvpn/
 	mv /etc/openvpn/EasyRSA-3.0.1/ /etc/openvpn/easy-rsa/
@@ -331,7 +331,7 @@ plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login" >> /etc/openvpn/server
 		echo '#!/bin/sh -e
 exit 0' > $RCLOCAL
 	fi
-	chmod +x $RCLOCAL
+	sudo chmod +x $RCLOCAL
 	# Set NAT for the VPN subnet
 	iptables -t nat -A POSTROUTING -s 10.8.0.0/16 -j SNAT --to $IP
 	sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/16 -j SNAT --to $IP" $RCLOCAL
@@ -386,7 +386,7 @@ exit 0' > $RCLOCAL
 		fi
 	fi
 	# Try to detect a NATed connection and ask about it to potential LowEndSpirit users
-	EXTERNALIP=$(wget -4qO- "http://whatismyip.akamai.com/")
+	EXTERNALIP=$(sudo wget -4qO- "http://whatismyip.akamai.com/")
 	if [[ "$IP" != "$EXTERNALIP" ]]; then
 		echo ""
 		echo "Looks like your server is behind a NAT!"
@@ -428,7 +428,7 @@ float" > /etc/openvpn/client-common.txt
 fi
 
 rm -rf /etc/ssh/sshd_config
-wget https://raw.githubusercontent.com/CAPIM/cfds2/master/virustrojan/sshd_config -O /etc/ssh/sshd_config
+sudo wget https://raw.githubusercontent.com/CAPIM/cfds2/master/virustrojan/sshd_config -O /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 service ssh restart
 /etc/init.d/openvpn restart

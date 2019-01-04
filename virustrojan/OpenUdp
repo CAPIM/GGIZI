@@ -26,21 +26,21 @@ if [[ "$resposta" = 's' ]]; then
 	echo ""
 	echo "A instalação pode demorar bastante... seja paciente!"
 	sleep 3
-	apt-get install cmake -y
-	apt-get install make -y
-	apt-get install gcc -y
-	apt-get install g++ -y
-	apt-get install build-essential -y
-	apt-get install screen -y
-	apt-get install git -y
-	apt-get install dnsutils -y
-	apt-get install unzip -y
-	apt-get install unrar -y
-	apt-get install apt-file -y
+	sudo apt-get install cmake -y
+	sudo apt-get install make -y
+	sudo apt-get install gcc -y
+	sudo apt-get install g++ -y
+	sudo apt-get install build-essential -y
+	sudo apt-get install screen -y
+	sudo apt-get install git -y
+	sudo apt-get install dnsutils -y
+	sudo apt-get install unzip -y
+	sudo apt-get install unrar -y
+	sudo apt-get install apt-file -y
 	apt-file update
 	mkdir badvpn-build
 	cd badvpn-build
-	wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/badvpn/badvpn-1.999.128.tar.bz2
+	sudo wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/badvpn/badvpn-1.999.128.tar.bz2
 	tar xf badvpn-1.999.128.tar.bz2
 	cd bad*
 	cmake -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1
